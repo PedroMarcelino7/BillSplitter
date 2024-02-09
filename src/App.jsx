@@ -7,26 +7,33 @@ function App() {
   const [tipPercentage, setTipPercentage] = useState(0)
   const [tip, setTip] = useState(0)
   const [total, setTotal] = useState(0)
-  const [split, setSplit] = useState(0)
+  const [split, setSplit] = useState(1)
   const [billEach, setBillEach] = useState(0)
 
   const handleBillChange = (e) => {
     setBill(parseInt(e.target.value))
   }
 
-  const handleTipChange = (e) => {
+  const handleTipPercentageChange = (e) => {
     const value = parseInt(e.target.value)
 
     setTipPercentage(value)
-
-    const tipCalc = ((value / 100) * bill)
-
-    setTip(parseFloat(tipCalc.toFixed(2)))
   }
 
   useEffect(() => {
-    setTotal(bill + tip)
+    const tipCalc = (tipPercentage / 100) * bill
+
+    setTip(tipCalc.toFixed(2))
+    setTotal(bill + tipCalc)
   }, [bill, tipPercentage])
+
+  const handleSplit = (e) => {
+    setSplit(parseInt(e.target.value))
+  }
+
+  useEffect(() => {
+    setBillEach((total / split).toFixed(2))
+  }, [bill, tipPercentage, split])
 
   return (
     <>
@@ -47,7 +54,7 @@ function App() {
               <label>Select tip</label><span>{tipPercentage} %</span>
             </div>
             <input
-              onChange={handleTipChange}
+              onChange={handleTipPercentageChange}
               type="range"
               value={tipPercentage}
               className="range"
@@ -71,14 +78,16 @@ function App() {
           <div>
             <div className="space-between">
               <label htmlFor="splitInput">Split</label>
-              <span></span>
+              <span>{split}</span>
             </div>
-            <input type="range" min="1" max="10" value="1" className="range" />
+            <input 
+            onChange={handleSplit}
+            type="range" min="1" max="10" className="range" value={split} />
           </div>
 
           <div className="space-between">
             <span>Bill each</span>
-            <span></span>
+            <span>$ {billEach}</span>
           </div>
         </section>
       </main>
